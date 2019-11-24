@@ -78,6 +78,8 @@ class Post {
 
                 if($count > $limit){
                      break;
+                }else {
+                    $count++;
                 }
 
                 $user_details_query = mysqli_query($this->con, "SELECT first_name, last_name, profile_pic FROM users WHERE username='$added_by'");
@@ -163,8 +165,13 @@ class Post {
                                 $body <br>
                             </div>
                         </div>";
-
-
+            }
+            if($count > $limit){
+                $str.= "<input type='hidden' class='nextPage' value='".($page + 1)."'>
+                        <input type='hidden  class='noMorePosts' value='false'>";
+            }else {
+                $str.= "<input type='hidden  class='noMorePosts' value='true'>
+                        <p class='theEnd'>Seems like you've no posts to show</p>";
             }
         }
 

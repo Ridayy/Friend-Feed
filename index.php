@@ -66,7 +66,7 @@
 </div>
 <script>
     var userLoggedIn = '<?php echo $userLoggedIn; ?>';
-    $(document).ready(function(){
+    $(document).ready(function(){ // loads 10 posts initially
         $('#loading').show();
         $.ajax({
             url:"includes/handlers/ajax_load_posts.php",
