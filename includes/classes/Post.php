@@ -39,6 +39,7 @@ class Post {
 
         $page = $data['page'];
         $userLoggedIn = $this->user_obj->getUsername();
+        
 
         if($page == 1)
             $start = 0;
