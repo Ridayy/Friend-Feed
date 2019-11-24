@@ -171,7 +171,7 @@ class Post {
                         <input type='hidden  class='noMorePosts' value='false'>";
             }else {
                 $str.= "<input type='hidden  class='noMorePosts' value='true'>
-                        <p class='theEnd'>Seems like you've no posts to show</p>";
+                        <p class='theEnd'>Seems like you've no posts to show!</p>";
             }
         }
 
