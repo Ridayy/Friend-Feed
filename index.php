@@ -1,33 +1,36 @@
 <?php 
- 
- include 'includes/header.php'; 
- include 'includes/classes/User.php'; 
- include 'includes/classes/Post.php'; 
+include("includes/header.php");
+include("includes/classes/User.php");
+include("includes/classes/Post.php");
 
-  $post = new Post($con, $userLoggedIn);
- 
-  if(isset($_POST['post'])){
-      $post->submitPost($_POST['post_text'], 'none');
-  }
- 
- 
+
+if(isset($_POST['post'])){
+	$post = new Post($con, $userLoggedIn);
+	$post->submitPost($_POST['post_text'], 'none');
+}
+
+
  ?>
+	<div class="user_details column">
+		<a href="<?php echo $userLoggedIn; ?>">  <img src="<?php echo $user['profile_pic']; ?>"> </a>
 
+		<div class="user_details_left_right">
+			<a href="<?php echo $userLoggedIn; ?>">
+			<?php 
+			echo $user['first_name'] . " " . $user['last_name'];
 
-   
-    <div class='user_details column'>
-        <a href="#"><img src="<?php echo $user['profile_pic']; ?>" alt="User Image"></a>
-        <div>
-            <a href="#">
-                <?php echo $user['first_name']. " ".$user['last_name']; ?>
-            </a>
-            <br>
-            Posts: <?php echo $user['num_posts']; ?>
-            <br>
-            Likes: <?php echo $user['num_likes']; ?>
-        </div>
-    </div>
-    <div class='posts_container'>
+			 ?>
+			</a>
+			<br>
+			<?php echo "Posts: " . $user['num_posts']. "<br>"; 
+			echo "Likes: " . $user['num_likes'];
+
+			?>
+		</div>
+
+	</div>
+
+	<div class='posts_container'>
       <div class='main_column column mx-2'>
         <form action="index.php" class='post_form' method='POST'>
                 <div>
@@ -62,54 +65,66 @@
         <img src="assets/images/loading.gif" alt="loading..." id="loading">
 
     </div>
-    
-</div>
-<script>
-    var userLoggedIn = '<?php echo $userLoggedIn; ?>';
-    $(document).ready(function(){ // loads 10 posts initially
-        $('#loading').show();
-        $.ajax({
-            url:"includes/handlers/ajax_load_posts.php",
-            type: "POST",
-            data:"page=1&userLoggedIn="+userLoggedIn,
-            cache:false,
 
-            success: function(data){
-                $("#loading").hide();
-                $(".posts_area").html(data);
-            } 
-        });
+	<script>
+	var userLoggedIn = '<?php echo $userLoggedIn; ?>';
 
-        $(window).scroll(function(){
-            var height = $('.posts_area').height();
-            var scroll_top = $(this).scrollTop();
-            var page = $('.posts_area').find('.nextPage').val();
-            var noMorePosts = $('.posts_area').find('.noMorePosts').val();
+	$(document).ready(function() {
 
-            if((document.body.scrollHeight == document.body.scrollTop + window.innerHeight)
-                && noMorePosts == 'false'){
-                  $('#loading').show();
-                  var req = $.ajax({
-                    url:"includes/handlers/ajax_load_posts.php",
-                    type: "POST",
-                    data:"page=" + page + "&userLoggedIn="+userLoggedIn,
-                    cache:false,
+		$('#loading').show();
 
-                    success: function(response){
-                        $(".posts_area").find('.nextPage').remove();
-                        $(".posts_area").find('.noMorePosts').remove();
+		//Original ajax request for loading first posts 
+		$.ajax({
+			url: "includes/handlers/ajax_load_posts.php",
+			type: "POST",
+			data: "page=1&userLoggedIn=" + userLoggedIn,
+			cache:false,
 
-                        $("#loading").hide();
-                        $(".posts_area").append(response);
-                    } 
-                });
-              }
+			success: function(data) {
+				$('#loading').hide();
+				$('.posts_area').html(data);
+			}
+		});
 
-              return false;
+		$(window).scroll(function() {
+			var height = $('.posts_area').height(); //Div containing posts
+			var scroll_top = $(this).scrollTop();
+			var page = $('.posts_area').find('.nextPage').val();
+			var noMorePosts = $('.posts_area').find('.noMorePosts').val();
 
-        });
+			if (($(window).scrollTop() + $(window).height() > $(document).height() - 100) && noMorePosts == 'false') {
+                $(window).unbind('scroll');
+				$('#loading').show();
 
-    });
-</script>
+				var ajaxReq = $.ajax({
+					url: "includes/handlers/ajax_load_posts.php",
+					type: "POST",
+					data: "page=" + page + "&userLoggedIn=" + userLoggedIn,
+					cache:false,
+
+					success: function(response) {
+						$('.posts_area').find('.nextPage').remove(); //Removes current .nextpage 
+						$('.posts_area').find('.noMorePosts').remove(); //Removes current .nextpage 
+
+						$('#loading').hide();
+						$('.posts_area').append(response);
+					}
+				});
+
+			} //End if 
+
+			return false;
+
+		}); //End (window).scroll(function())
+
+
+	});
+
+	</script>
+
+
+
+
+	</div>
 </body>
 </html>
